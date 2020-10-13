@@ -6,7 +6,7 @@ export default function App() {
   return (
     <ChakraProvider>
       <div>
-        <TrackPlayer audioUrl="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" />
+        <TrackPlayer audioUrl="http://localhost:3000/audio/sample.mp3" />
       </div>
     </ChakraProvider>
   );

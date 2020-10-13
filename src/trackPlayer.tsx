@@ -13,24 +13,37 @@ interface TrackPlayerProps {
 const TrackPlayer: React.FC<TrackPlayerProps> = ({
   audioUrl,
   playing = false,
-  duration = 0
+  duration = 0,
 }) => {
   const [isPlaying, setIsPlaying] = useState(playing);
   const [durationState, setDurationState] = useState(duration);
 
   const waveformRef = useRef<HTMLDivElement>(null);
+  const wavesurfer = useRef<Wavesurfer | null>(null);
 
   useEffect(() => {
     if (waveformRef.current) {
-      const wavesurfer = Wavesurfer.create({
-        container: waveformRef.current
+      wavesurfer.current = Wavesurfer.create({
+        container: waveformRef.current,
+        waveColor: "#fff",
+      });
+
+      wavesurfer.current.load(audioUrl);
+
+      wavesurfer.current.on("ready", () => {
+        if (isPlaying) {
+          wavesurfer.current?.play();
+        } else {
+          wavesurfer.current?.pause();
+        }
       });
     }
+    return () => wavesurfer.current?.destroy();
   }, []);
 
   const onPlayPause = () => {
     setIsPlaying(!isPlaying);
-    console.log("clicked onPlayPause");
+    wavesurfer.current?.playPause();
   };
 
   return (
@@ -40,7 +53,7 @@ const TrackPlayer: React.FC<TrackPlayerProps> = ({
           {isPlaying ? <IoMdPause size="30px" /> : <IoMdPlay size="30px" />}
         </Circle>
       </Box>
-      <Box>
+      <Box width="100%">
         <div ref={waveformRef}></div>
       </Box>
     </Flex>
